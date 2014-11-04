@@ -136,8 +136,8 @@ bool load_font_texture (const char* file_name, GLuint* tex) {
 bool create_font_shaders () {
 	const char* vs_str =
 	"#version 400\n"
-	"layout (location = 0) in vec2 vp;"
-	"layout (location = 1) in vec2 vt;"
+	"in vec2 vp;"
+	"in vec2 vt;"
 	"out vec2 st;"
 	"void main () {"
 	"  st = vt;"
@@ -177,6 +177,9 @@ bool create_font_shaders () {
 	font_sp = glCreateProgram ();
 	glAttachShader (font_sp, vs);
 	glAttachShader (font_sp, fs);
+	// i do this to improve support across older GL versions
+	glBindAttribLocation (font_sp, 0, "vp");
+	glBindAttribLocation (font_sp, 1, "vt");
 	glLinkProgram (font_sp);
 	glGetProgramiv (font_sp, GL_LINK_STATUS, &params);
 	if (GL_TRUE != params) {
