@@ -18,10 +18,12 @@ const char* atlas_meta = "freemono.meta";
 int gl_width = 800;
 int gl_height = 800;
 GLFWwindow* gl_window;
-GLuint vao;
-GLuint shader_programme;
 
 int main () {
+	// for drawing a triangle
+	GLuint vao;
+	GLuint shader_programme;
+
 	//
 	// initialise GL
 	assert (glfwInit ());
