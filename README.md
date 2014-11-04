@@ -28,7 +28,11 @@ Put these files in your run-time directory:
 * before your rendering loop:
 ```
 init_text_rendering ("freemono.png", "freemono.meta", viewport_width, viewport_height);
-int hello_id = add_text ("Hello world!", -0.75, 0.5, 100.0f, 0.5f, 0.5f, 1.0f, 1.0f);
+// x and y are -1 to 1
+// size_px is the maximum glyph size in pixels (try 100.0f)
+// r,g,b,a are red,blue,green,opacity values between 0.0 and 1.0
+// if you want to change the text later you will use the returned integer as a parameter
+int hello_id = add_text ("Hello world!", x, y, size_px, r, g, b, a);
 ```
 * during your rendering loop:
 ```
