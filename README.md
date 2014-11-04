@@ -40,7 +40,8 @@ draw_texts ();
 ```
 #Adding Other Fonts#
 
-You can grab the generator tool that i made from:
-
+The fonts have a .meta file which gives the size and offset of each glyph.
+You could draw your own atlas by hand and manually tweak its .meta file.
+I also made a generator that takes a TTF font and makes a .png and a .meta from it:
 https://github.com/capnramses/antons_opengl_tutorials_book/tree/master/27_font_atlas
 
