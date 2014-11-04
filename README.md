@@ -1,17 +1,17 @@
 a simple drop-in to add text rendering to a shader-based OpenGL project
 
-=Example=
+#Example#
 
 See example.cpp for a minimal OpenGL 4 example that uses text rendering
 
-=Assumptions=
+#Assumptions#
 
 * you are using GLEW + GLFW3 to start opengl - you can easily change the #includes in text.h
 * You are using OpenGL 4 and GLSL 4.0.0 - make minor changes to shaders in text.cpp to adjust
 * You are happy using one font for all your text - your could easily upgrade this
 * You are using a C++ compiler - this could should compile with a C compiler too (#include <stdbool.h>)
 
-=Setup=
+#Setup#
 
 You don't need to pre-compile anything - just add these files to your project:
 * text.h
@@ -22,7 +22,7 @@ Put these files in your run-time directory:
 * freemono.png
 * freemono.meta
 
-=Usage=
+#Usage#
 
 * In your main.cpp #include "text.h"
 * before your rendering loop:
@@ -31,7 +31,7 @@ Put these files in your run-time directory:
 * during your rendering loop:
 ** draw_texts ();
 
-=Adding Other Fonts=
+#Adding Other Fonts#
 
 You can grab the generator tool that i made from:
 
