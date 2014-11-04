@@ -26,10 +26,11 @@ Put these files in your run-time directory:
 
 * In your main.cpp #include "text.h"
 * before your rendering loop:
-  init_text_rendering ("freemono.png", "freemono.meta", viewport_width, viewport_height);
-  int hello_id = add_text ("Hello world!", -0.75, 0.5, 100.0f, 0.5f, 0.5f, 1.0f, 1.0f);
+    init_text_rendering ("freemono.png", "freemono.meta", viewport_width, viewport_height);
+    int hello_id = add_text ("Hello world!", -0.75, 0.5, 100.0f, 0.5f, 0.5f, 1.0f, 1.0f);
+
 * during your rendering loop:
-  draw_texts ();
+    draw_texts ();
 
 #Adding Other Fonts#
 
