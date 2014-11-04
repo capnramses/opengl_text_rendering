@@ -116,6 +116,7 @@ int main () {
 		glBindVertexArray (vao);
 		glDrawArrays (GL_TRIANGLES, 0, 3);
 		
+		// update the text for the timer
 		double t = glfwGetTime ();
 		char tmp[256];
 		sprintf (tmp, "The time is: %lf\n", t);
@@ -124,6 +125,7 @@ int main () {
 		float g = fabs (sinf (t + 1.57f));
 		change_text_colour (time_id, r, g, 0.0f, 1.0f);
 		
+		// draw all the texts
 		draw_texts ();
 		
 		glfwPollEvents ();
