@@ -24,7 +24,7 @@ Put these files in your run-time directory:
 
 #Usage#
 
-* In your main.cpp #include "text.h"
+* In your main.cpp ```#include "text.h"```
 * before your rendering loop:
 ```
 init_text_rendering ("freemono.png", "freemono.meta", viewport_width, viewport_height);
