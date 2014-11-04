@@ -9,6 +9,11 @@
 // * i didn't add support to render multiple fonts at once (but trivial to add)
 // =Dependencies=
 // Sean Barrett's public domain image loader lib: stb_image.h (included)
+// =Possible Easy Extensions=
+// * support multiple fonts
+// * add a flag to allow text to be invisible/visible
+// * rotate text
+// * place text in 3d
 //
 
 #ifndef _TEXT_H_
@@ -19,11 +24,42 @@
 #include <GLFW/glfw3.h>
 
 //
-// load files for rendering;
-// 1. an atlas image containing the pixels of all glyphs (characters)
-// expected format is 16x16 glyphs (256 total)
-// 2. a text file, describing size and offset of each character in the image
-// returns false if could not load files
-bool load_font (const char* atlas_image, const char* atlas_meta);
+// call before main loop to load shaders and stuff
+bool init_text_rendering (
+	const char* font_image_file,
+	const char* font_meta_data_file,
+	int viewport_width,
+	int viewport_height
+);
+
+//
+// add a string of text to render on-screen
+// returns an integer to identify it with later if we want to change the text
+// returns <0 on error
+// x,y are position of the bottom-left of the first character in clip space
+// size_is_px is the size of maximum-sized glyph in pixels on screen
+// r, g, b, a is the colour of the text string
+int add_text (
+	const char* str,
+	float x,
+	float y,
+	float size_in_px,
+	float r,
+	float g,
+	float b,
+	float a
+);
+
+//
+// change text string in any previously added text
+bool update_text (int id, const char* str);
+
+//
+// change colour of any previously added text
+bool change_text_colour (int id, float r, float g, float b, float a);
+
+//
+// draw all the texts to screen
+void draw_texts ();
 
 #endif
