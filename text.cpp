@@ -406,6 +406,7 @@ void draw_texts () {
 	
 	// always draw on-top of scene
 	glDisable (GL_DEPTH_TEST);
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable (GL_BLEND);
 	
 	glActiveTexture (GL_TEXTURE0);

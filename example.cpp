@@ -46,7 +46,6 @@ int main () {
 	glCullFace (GL_BACK);
 	glFrontFace (GL_CCW);
 	glEnable (GL_CULL_FACE);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor (0.2, 0.2, 0.2, 1.0);
 	glViewport (0, 0, gl_width, gl_height);
 	
