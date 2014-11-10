@@ -16,6 +16,7 @@
 #include "stb_image.h" // Sean Barrett's image loader
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 // size of atlas. my handmade image is 16x16 glyphs
 #define ATLAS_COLS 16

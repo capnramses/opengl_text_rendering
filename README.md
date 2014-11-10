@@ -18,6 +18,8 @@ You don't need to pre-compile anything - just add these files to your project:
 * text.cpp
 * stb_image.h (this image loader is from https://github.com/nothings/stb)
 
+If you are already using stb_image then remove the #define at the top of text.cpp
+
 Put these files in your run-time directory:
 * freemono.png
 * freemono.meta
