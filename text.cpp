@@ -23,17 +23,9 @@
 #define ATLAS_ROWS 16
 #define MAX_STRINGS 256
 
-struct Renderable_Text {
-	GLuint points_vbo, texcoords_vbo;
-	GLuint vao;
-	float x, y;
-	float size_px;
-	float r, g, b, a;
-	int point_count;
-};
-
 GLuint font_texture;
 GLuint font_sp; // shader programme
+GLint font_sp_pos_loc = -1;
 GLint font_sp_text_colour_loc;
 Renderable_Text renderable_texts[MAX_STRINGS];
 float glyph_y_offsets[256] = { 0.0f };
@@ -50,6 +42,7 @@ bool load_font_meta (const char* meta_file) {
 	float prop_yMin = 0.0f;
 	float prop_height = 0.0f;
 	float prop_y_offset = 0.0f;
+	int lc = 1;
 	FILE* fp = NULL;
 	
 	printf ("loading font meta-data from file: %s\n", meta_file);
@@ -60,18 +53,28 @@ bool load_font_meta (const char* meta_file) {
 	}
 	// get header line first
 	fgets (line, 128, fp);
+	printf ("line %i -- %s\n", lc, line);
+	lc++;
 	// loop through and get each glyph's info
-	while (EOF != fscanf (
-		fp, "%i %f %f %f %f %f\n",
-		&ascii_code,
-		&prop_xMin,
-		&prop_width,
-		&prop_yMin,
-		&prop_height,
-		&prop_y_offset
-	)) {
+	while (fgets (line, 128, fp)) {
+		int sc = 0;
+		
+		sc = sscanf (
+			line, "%i %f %f %f %f %f",
+			&ascii_code,
+			&prop_xMin,
+			&prop_width,
+			&prop_yMin,
+			&prop_height,
+			&prop_y_offset
+		);
+		if (sc != 6) {
+			fprintf (stderr, "ERROR: wrong number of tokens on line %i [%s]\n", lc, line);
+		}
 		glyph_widths[ascii_code] = prop_width;
 		glyph_y_offsets[ascii_code] = 1.0 - prop_height - prop_y_offset;
+		printf ("scanned code %i line %i\n", ascii_code, lc);
+		lc++;
 	}
 	fclose (fp);
 	return true;
@@ -139,10 +142,11 @@ bool create_font_shaders () {
 	"#version 400\n"
 	"in vec2 vp;"
 	"in vec2 vt;"
+	"uniform vec2 pos;"
 	"out vec2 st;"
 	"void main () {"
 	"  st = vt;"
-	"  gl_Position = vec4 (vp, 0.0, 1.0);"
+	"  gl_Position = vec4 (pos + vp, 0.0, 1.0);"
 	"}";
 	const char* fs_str =
 	"#version 400\n"
@@ -189,6 +193,7 @@ bool create_font_shaders () {
 		return false;
 	}
 	font_sp_text_colour_loc = glGetUniformLocation (font_sp, "text_colour");
+	font_sp_pos_loc = glGetUniformLocation (font_sp, "pos");
 	return true;
 }
 
@@ -224,22 +229,23 @@ bool init_text_rendering (
 // set of quads
 void text_to_vbo (
 	const char* str,
-	float at_x,
-	float at_y,
 	float scale_px,
 	GLuint* points_vbo,
 	GLuint* texcoords_vbo,
-	int* point_count
+	int* point_count,
+	float* br_x,
+	float* br_y
 ) {
 	int len = 0;
 	int i;
 	float* points_tmp = NULL;
 	float* texcoords_tmp = NULL;
 	float line_offset = 0.0f;
-	float curr_x;
+	float curr_x = 0.0f;
 	int curr_index = 0;
+	*br_x = 0.0f;
+	*br_y = 0.0f;
 	
-	curr_x = at_x;
 	len = strlen (str);
 	points_tmp = (float*)malloc (sizeof (float) * len * 12);
 	texcoords_tmp = (float*)malloc (sizeof (float) * len * 12);
@@ -248,8 +254,8 @@ void text_to_vbo (
 		float s, t, x_pos, y_pos;
 		
 		if ('\n' == str[i]) {
-			line_offset += scale_px / font_viewport_height;
-			curr_x = at_x;
+			line_offset += (2.0f * scale_px) / font_viewport_height;
+			curr_x = 0.0;
 			continue;
 		}
 		
@@ -266,25 +272,26 @@ void text_to_vbo (
 		
 		// work out position of glyphtriangle_width
 		x_pos = curr_x;
-		y_pos = at_y - scale_px / font_viewport_height *
+		y_pos = 0.0f - ((2.0f * scale_px) / font_viewport_height) *
 			glyph_y_offsets[ascii_code] - line_offset;
 		
 		// move next glyph along to the end of this one
 		if (i + 1 < len) {
 			// upper-case letters move twice as far
-			curr_x += glyph_widths[ascii_code] * scale_px / font_viewport_width;
+			curr_x += glyph_widths[ascii_code] * (2.0f * scale_px) /
+				font_viewport_width;
 		}
-		// add 6 points and texture coordinates to buffers for each glyph
+		/// add 6 points and texture coordinates to buffers for each glyph
 		points_tmp[curr_index * 12] = x_pos;
 		points_tmp[curr_index * 12 + 1] = y_pos;
 		points_tmp[curr_index * 12 + 2] = x_pos;
-		points_tmp[curr_index * 12 + 3] = y_pos - scale_px / font_viewport_height;
-		points_tmp[curr_index * 12 + 4] = x_pos + scale_px / font_viewport_width;
-		points_tmp[curr_index * 12 + 5] = y_pos - scale_px / font_viewport_height;
+		points_tmp[curr_index * 12 + 3] = y_pos - (2.0f * scale_px) / font_viewport_height;
+		points_tmp[curr_index * 12 + 4] = x_pos + (2.0f * scale_px) / font_viewport_width;
+		points_tmp[curr_index * 12 + 5] = y_pos - (2.0f * scale_px) / font_viewport_height;
 		
-		points_tmp[curr_index * 12 + 6] = x_pos + scale_px / font_viewport_width;
-		points_tmp[curr_index * 12 + 7] = y_pos - scale_px / font_viewport_height;
-		points_tmp[curr_index * 12 + 8] = x_pos + scale_px / font_viewport_width;
+		points_tmp[curr_index * 12 + 6] = x_pos + (2.0f * scale_px) / font_viewport_width;
+		points_tmp[curr_index * 12 + 7] = y_pos - (2.0f * scale_px) / font_viewport_height;
+		points_tmp[curr_index * 12 + 8] = x_pos + (2.0f * scale_px) / font_viewport_width;
 		points_tmp[curr_index * 12 + 9] = y_pos;
 		points_tmp[curr_index * 12 + 10] = x_pos;
 		points_tmp[curr_index * 12 + 11] = y_pos;
@@ -302,6 +309,15 @@ void text_to_vbo (
 		texcoords_tmp[curr_index * 12 + 9] = 1.0 - t + 1.0 / ATLAS_ROWS;
 		texcoords_tmp[curr_index * 12 + 10] = s;
 		texcoords_tmp[curr_index * 12 + 11] = 1.0 - t + 1.0 / ATLAS_ROWS;
+		
+		// update record of bottom-right corner of text area
+		if (x_pos + (2.0f * scale_px) / font_viewport_width > *br_x) {
+			*br_x = x_pos + (2.0f * scale_px) / font_viewport_width;
+		}
+		if (y_pos - (2.0f * scale_px) / font_viewport_height < *br_y) {
+			*br_y = y_pos - (2.0f * scale_px) / font_viewport_height;
+		}
+		
 		curr_index++;
 	}
 	glBindBuffer (GL_ARRAY_BUFFER, *points_vbo);
@@ -346,15 +362,18 @@ int add_text (
 		fprintf (stderr, "ERROR: too many strings of on-screen text. max 256\n");
 		return -1;
 	}
-	renderable_texts[num_render_strings].x = x;
-	renderable_texts[num_render_strings].y = y;
+	renderable_texts[num_render_strings].visible = true;
+	renderable_texts[num_render_strings].tl_x = x;
+	renderable_texts[num_render_strings].tl_y = y;
 	renderable_texts[num_render_strings].size_px = size_in_px;
 	glGenBuffers (1, &renderable_texts[num_render_strings].points_vbo);
 	glGenBuffers (1, &renderable_texts[num_render_strings].texcoords_vbo);
-	text_to_vbo (str, x, y, size_in_px,
+	text_to_vbo (str, size_in_px,
 		&renderable_texts[num_render_strings].points_vbo,
 		&renderable_texts[num_render_strings].texcoords_vbo,
-		&renderable_texts[num_render_strings].point_count);
+		&renderable_texts[num_render_strings].point_count,
+		&renderable_texts[num_render_strings].br_x,
+		&renderable_texts[num_render_strings].br_y);
 	// set up VAO
 	glGenVertexArrays (1, &renderable_texts[num_render_strings].vao);
 	glBindVertexArray (renderable_texts[num_render_strings].vao);
@@ -380,15 +399,26 @@ int add_text (
 	return num_render_strings - 1;
 }
 
+void move_text (int id, float x, float y) {
+	renderable_texts[id].tl_x = x;
+	renderable_texts[id].tl_y = y;
+}
+
+void centre_text (int id, float x, float y) {
+	float width = renderable_texts[id].br_x - renderable_texts[id].tl_x;
+	float l = x - width / 2.0f;
+	move_text (id, l, y);
+}
+
 bool update_text (int id, const char* str) {
 	// just re-generate the existing VBOs and point count
 	text_to_vbo (str,
-		renderable_texts[id].x,
-		renderable_texts[id].y,
 		renderable_texts[id].size_px,
 		&renderable_texts[id].points_vbo,
 		&renderable_texts[id].texcoords_vbo,
-		&renderable_texts[id].point_count);
+		&renderable_texts[id].point_count,
+		&renderable_texts[id].br_x,
+		&renderable_texts[id].br_y);
 	
 	return true;
 }
@@ -414,12 +444,17 @@ void draw_texts () {
 	glUseProgram (font_sp);
 	for (i = 0; i < num_render_strings; i++) {
 		glBindVertexArray (renderable_texts[i].vao);
+		
+		glUniform2f (font_sp_pos_loc,
+			renderable_texts[i].tl_x, renderable_texts[i].tl_y);
 		glUniform4f (font_sp_text_colour_loc,
 			renderable_texts[i].r,
 			renderable_texts[i].g,
 			renderable_texts[i].b,
 			renderable_texts[i].a);
+		
 		glDrawArrays (GL_TRIANGLES, 0, renderable_texts[i].point_count);
+		
 	}
 	
 	glEnable (GL_DEPTH_TEST);

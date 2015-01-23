@@ -23,6 +23,19 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+struct Renderable_Text {
+	GLuint points_vbo, texcoords_vbo;
+	GLuint vao;
+	// top-left screen space coords
+	float tl_x, tl_y;
+	// bottom-right screen space coords. useful for background box sizing
+	float br_x, br_y;
+	float size_px;
+	float r, g, b, a;
+	int point_count;
+	bool visible;
+};
+
 //
 // call before main loop to load shaders and stuff
 bool init_text_rendering (
@@ -49,6 +62,11 @@ int add_text (
 	float b,
 	float a
 );
+
+//
+// x,y are position of the bottom-left of the first character in clip space
+void move_text (int id, float x, float y);
+void centre_text (int id, float x, float y);
 
 //
 // change text string in any previously added text

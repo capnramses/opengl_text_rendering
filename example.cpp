@@ -99,13 +99,15 @@ int main () {
 	//
 	// initialise font, load from files
 	assert (init_text_rendering (atlas_image, atlas_meta, gl_width, gl_height));
+	printf ("adding text...\n");
 	int hello_id = add_text (
-		"Hello,\nis it me you're\nlooking for?",
-		-0.75f, 0.5f, 100.0f, 0.5f, 0.5f, 1.0f, 1.0f);
+		"Hello\nis it me you're looking for?",
+		-0.9f, 0.5f, 50.0f, 0.5f, 0.5f, 1.0f, 1.0f);
 	
 	int time_id = add_text (
 		"The time is:",
-		-1.0f, 1.0f, 75.0f, 1.0f, 0.0f, 0.0f, 1.0f);
+		-1.0f, 1.0f, 35.0f, 1.0f, 0.0f, 0.0f, 1.0f);
+	move_text (time_id, -1.0f, 1.0f);
 	
 	//
 	// display stuff
