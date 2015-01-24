@@ -15,8 +15,8 @@
 const char* atlas_image = "freemono.png";
 const char* atlas_meta = "freemono.meta";
 
-int gl_width = 800;
-int gl_height = 800;
+int gl_width = 600;
+int gl_height = 600;
 GLFWwindow* gl_window;
 
 int main () {
@@ -27,10 +27,10 @@ int main () {
 	//
 	// initialise GL
 	assert (glfwInit ());
-	glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 0);
-	glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 2);
+	glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 1);
+//	glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+//	glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	gl_window = glfwCreateWindow (
 		gl_width, gl_height, "Text Example", NULL, NULL);
 	assert (gl_window);
@@ -73,16 +73,15 @@ int main () {
 	// shader for the geometry
 	{
 		const char* vertex_shader =
-		"#version 400\n"
-		"in vec3 vp;"
+		"#version 120\n"
+		"attribute vec3 vp;"
 		"void main () {"
 		"  gl_Position = vec4 (vp, 1.0);"
 		"}";
 		const char* fragment_shader =
-		"#version 400\n"
-		"out vec4 frag_colour;"
+		"#version 120\n"
 		"void main () {"
-		"  frag_colour = vec4 (0.2, 0.2, 0.6, 1.0);"
+		"  gl_FragColour = vec4 (0.2, 0.2, 0.6, 1.0);"
 		"}";
 		GLuint vs = glCreateShader (GL_VERTEX_SHADER);
 		glShaderSource (vs, 1, &vertex_shader, NULL);
@@ -122,7 +121,7 @@ int main () {
 		// update the text for the timer
 		double t = glfwGetTime ();
 		char tmp[256];
-		sprintf (tmp, "The time is: %lf\n", t);
+		sprintf (tmp, "The time is: %f\n", t);
 		update_text (time_id, tmp);
 		float r = fabs (sinf (t));
 		float g = fabs (sinf (t + 1.57f));

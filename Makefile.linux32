@@ -1,0 +1,10 @@
+CC = g++
+FLAGS = -Wall -pedantic
+INC = -I common/include
+SYS_LIB = -lGL -lX11 -lXxf86vm -lXrandr -lpthread -lXi
+STATIC = common/linux_i386/libGLEW.a common/linux_i386/libglfw3.a
+
+all: examplebuild
+
+examplebuild:
+	${CC} ${FLAGS} -o example32 example.cpp text.cpp ${STATIC} ${INC} ${SYS_LIB}

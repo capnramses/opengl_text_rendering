@@ -139,23 +139,22 @@ bool load_font_texture (const char* file_name, GLuint* tex) {
 
 bool create_font_shaders () {
 	const char* vs_str =
-	"#version 400\n"
-	"in vec2 vp;"
-	"in vec2 vt;"
+	"#version 120\n"
+	"attribute vec2 vp;"
+	"attribute vec2 vt;"
 	"uniform vec2 pos;"
-	"out vec2 st;"
+	"varying vec2 st;"
 	"void main () {"
 	"  st = vt;"
 	"  gl_Position = vec4 (pos + vp, 0.0, 1.0);"
 	"}";
 	const char* fs_str =
-	"#version 400\n"
-	"in vec2 st;"
+	"#version 120\n"
+	"varying vec2 st;"
 	"uniform sampler2D tex;"
 	"uniform vec4 text_colour;"
-	"out vec4 frag_colour;"
 	"void main () {"
-	"  frag_colour = texture (tex, st) * text_colour;"
+	"  gl_FragColor = texture2D (tex, st) * text_colour;"
 	"}";
 	GLuint vs, fs;
 	int params = -1;
