@@ -81,7 +81,7 @@ int main () {
 		const char* fragment_shader =
 		"#version 120\n"
 		"void main () {"
-		"  gl_FragColour = vec4 (0.2, 0.2, 0.6, 1.0);"
+		"  gl_FragColor = vec4 (0.2, 0.2, 0.6, 1.0);"
 		"}";
 		GLuint vs = glCreateShader (GL_VERTEX_SHADER);
 		glShaderSource (vs, 1, &vertex_shader, NULL);
@@ -101,11 +101,11 @@ int main () {
 	printf ("adding text...\n");
 	int hello_id = add_text (
 		"Hello\nis it me you're looking for?",
-		-0.9f, 0.5f, 50.0f, 0.5f, 0.5f, 1.0f, 1.0f);
+		-0.9f, 0.5f, 35.0f, 0.5f, 0.5f, 1.0f, 1.0f);
 	
 	int time_id = add_text (
 		"The time is:",
-		-1.0f, 1.0f, 35.0f, 1.0f, 0.0f, 0.0f, 1.0f);
+		-1.0f, 1.0f, 40.0f, 1.0f, 0.0f, 0.0f, 1.0f);
 	move_text (time_id, -1.0f, 1.0f);
 	
 	//
