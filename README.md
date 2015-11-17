@@ -7,7 +7,7 @@ See example.cpp for a minimal OpenGL 4 example that uses text rendering
 #Assumptions#
 
 * you are using GLEW + GLFW3 to start opengl - you can easily change the #includes in text.h
-* You are using OpenGL 4 and GLSL 4.0.0 - make minor changes to shaders in text.cpp to adjust
+* You are using OpenGL 2.1 or newer and GLSL 1.2.0 - make minor changes to shaders in text.cpp to adjust
 * You are happy using one font for all your text - you could easily upgrade this
 * You are using a C++ compiler - this should compile with a C compiler too - ```#include <stdbool.h>```
 
