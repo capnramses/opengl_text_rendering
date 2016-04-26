@@ -28,8 +28,8 @@ GLuint font_sp; // shader programme
 GLint font_sp_pos_loc = -1;
 GLint font_sp_text_colour_loc;
 Renderable_Text renderable_texts[MAX_STRINGS];
-float glyph_y_offsets[256] = { 0.0f };
-float glyph_widths[256] = { 0.0f };
+float glyph_y_offsets[256];
+float glyph_widths[256];
 int font_viewport_width;
 int font_viewport_height;
 int num_render_strings;
@@ -43,10 +43,8 @@ bool load_font_meta (const char* meta_file) {
 	float prop_height = 0.0f;
 	float prop_y_offset = 0.0f;
 	int lc = 1;
-	FILE* fp = NULL;
-	
 	printf ("loading font meta-data from file: %s\n", meta_file);
-	fp = fopen (meta_file, "r");
+	FILE* fp = fopen (meta_file, "r");
 	if (!fp) {
 		fprintf (stderr, "ERROR: could not open file %s\n", meta_file);
 		return false;
@@ -57,9 +55,7 @@ bool load_font_meta (const char* meta_file) {
 	lc++;
 	// loop through and get each glyph's info
 	while (fgets (line, 128, fp)) {
-		int sc = 0;
-		
-		sc = sscanf (
+		int sc = sscanf (
 			line, "%i %f %f %f %f %f",
 			&ascii_code,
 			&prop_xMin,
@@ -236,7 +232,6 @@ void text_to_vbo (
 	float* br_y
 ) {
 	int len = 0;
-	int i;
 	float* points_tmp = NULL;
 	float* texcoords_tmp = NULL;
 	float line_offset = 0.0f;
@@ -248,7 +243,7 @@ void text_to_vbo (
 	len = strlen (str);
 	points_tmp = (float*)malloc (sizeof (float) * len * 12);
 	texcoords_tmp = (float*)malloc (sizeof (float) * len * 12);
-	for (i = 0; i < len; i++) {
+	for (int i = 0; i < len; i++) {
 		int ascii_code, atlas_col, atlas_row;
 		float s, t, x_pos, y_pos;
 		
@@ -431,8 +426,6 @@ bool change_text_colour (int id, float r, float g, float b, float a) {
 }
 
 void draw_texts () {
-	int i;
-	
 	// always draw on-top of scene
 	glDisable (GL_DEPTH_TEST);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -441,7 +434,7 @@ void draw_texts () {
 	glActiveTexture (GL_TEXTURE0);
 	glBindTexture (GL_TEXTURE_2D, font_texture);
 	glUseProgram (font_sp);
-	for (i = 0; i < num_render_strings; i++) {
+	for (int i = 0; i < num_render_strings; i++) {
 		glBindVertexArray (renderable_texts[i].vao);
 		
 		glUniform2f (font_sp_pos_loc,
@@ -455,6 +448,6 @@ void draw_texts () {
 		glDrawArrays (GL_TRIANGLES, 0, renderable_texts[i].point_count);
 		
 	}
-	
+	glDisable (GL_BLEND);
 	glEnable (GL_DEPTH_TEST);
 }
