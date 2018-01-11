@@ -1,17 +1,17 @@
 a simple drop-in to add text rendering to a shader-based OpenGL project
 
-#Example#
+# Example
 
 See example.cpp for a minimal shader-based OpenGL 2.1 example that uses text rendering
 
-#Assumptions#
+# Assumptions
 
 * you are using GLEW + GLFW3 to start opengl - you can easily change the #includes in text.h
 * You are using OpenGL 2.1 or newer and GLSL 1.2.0 or newer - make minor changes to shaders in text.cpp to adjust
 * You are happy using one font for all your text - you could easily upgrade this
 * You are using a C++ compiler - this should compile with a C compiler too - ```#include <stdbool.h>```
 
-#Setup#
+# Setup
 
 You don't need to pre-compile anything - just add these files to your project:
 * text.h
@@ -24,7 +24,7 @@ Put these files in your run-time directory:
 * freemono.png
 * freemono.meta
 
-#Usage#
+# Usage
 
 * In your main.cpp ```#include "text.h"```
 * before your rendering loop:
@@ -40,7 +40,7 @@ int hello_id = add_text ("Hello world!", x, y, size_px, r, g, b, a);
 ```
 draw_texts ();
 ```
-#Adding Other Fonts#
+# Adding Other Fonts
 
 The fonts have a .meta file which gives the size and offset of each glyph.
 You could draw your own atlas by hand and manually tweak its .meta file.
